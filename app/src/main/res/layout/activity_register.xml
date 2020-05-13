@@ -8,13 +8,13 @@
     tools:context=".RegisterActivity" >
 
     <Button
-        android:id="@+id/select_photo"
-        android:layout_width="191dp"
-        android:layout_height="172dp"
+
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginStart="162dp"
         android:layout_marginLeft="162dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="162dp"
+        android:layout_marginEnd="112dp"
         android:layout_marginRight="162dp"
         android:background="@drawable/select_photo"
         android:text="Select photo"
@@ -99,4 +99,22 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="@+id/button_register"
         app:layout_constraintTop_toBottomOf="@+id/button_register" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/select_photo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="@+id/select_photo"
+        app:layout_constraintEnd_toEndOf="@+id/select_photo"
+        app:layout_constraintStart_toStartOf="@+id/select_photo"
+        app:layout_constraintTop_toTopOf="@+id/select_photo" />
+
+
+    <!--    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#FF000000"/>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
