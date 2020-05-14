@@ -2,7 +2,6 @@ package com.example.kotlinmessenger
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,7 +24,6 @@ class RegisterActivity : AppCompatActivity() {
         button_register.setOnClickListener {
             performRegister()
         }
-
 
         already_have_an_account.setOnClickListener {
             Log.d("MainActivity", "Try to show login activity")
@@ -60,7 +58,7 @@ class RegisterActivity : AppCompatActivity() {
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
 
-                select_photo.setImageBitmap(bitmap)
+            select_photo.setImageBitmap(bitmap)
 
             button_register.alpha = 0f
 
@@ -109,32 +107,46 @@ class RegisterActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d(
                     "Register",
-                    "Successfully uploaded image: ${it.metadata?.path}")
+                    "Successfully uploaded image: ${it.metadata?.path}"
+                )
 
                 ref.downloadUrl.addOnSuccessListener {
                     it.toString()
                     Log.d(
                         "RegisterActivity",
-                        "File Location: $it")
-                    
+                        "File Location: $it"
+                    )
+
                     saveUserToFirebaseDatabase(it.toString())
                 }
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 //do some logging here
             }
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
-        val uid = FirebaseAuth.getInstance().uid?:""
-        val ref= FirebaseDatabase.getInstance().getReference("/users$uid")
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users$uid")
         val user = User(uid, username_edittext_reg.text.toString(), profileImageUrl)
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.d(
-                    "RegisterActivity",
-                    "Finally we saved the user to Firebase db")
+                //  Log.d(TAG, "Finally we saved the user to Firebase db")
+                Log.d("test", "Finally we saved the user to Firebase db")
+
+
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+            .addOnFailureListener {
+                // Log.d(TAG, "Failed to set value to database: ${it.message}")
+                Log.d("TAG", "Failed to set value to database: ${it.message}")
             }
     }
 }
-class User(val uid: String, val username: String, val profileImageUrl: String)
+
+class User(val uid: String, val username: String, val profileImageUrl: String){
+    constructor() : this("","","")
+}
+
