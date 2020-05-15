@@ -1,4 +1,4 @@
-package com.example.kotlinmessenger
+package com.example.kotlinmessenger.registerlogin
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import com.example.kotlinmessenger.messages.LatestMessagesActivity
+import com.example.kotlinmessenger.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -128,7 +130,11 @@ class RegisterActivity : AppCompatActivity() {
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users$uid")
-        val user = User(uid, username_edittext_reg.text.toString(), profileImageUrl)
+        val user = User(
+            uid,
+            username_edittext_reg.text.toString(),
+            profileImageUrl
+        )
         ref.setValue(user)
             .addOnSuccessListener {
                 //  Log.d(TAG, "Finally we saved the user to Firebase db")
