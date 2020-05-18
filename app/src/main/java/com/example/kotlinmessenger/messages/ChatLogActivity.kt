@@ -1,10 +1,8 @@
 package com.example.kotlinmessenger.messages
 
-import android.nfc.Tag
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinmessenger.R
 import com.example.kotlinmessenger.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -12,11 +10,11 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
-import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 
@@ -26,21 +24,19 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
     val adapter = GroupAdapter<ViewHolder>()
+    var toUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
 
         recyclerview_chat_log.adapter = adapter
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+        toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
 
-        // supportActionBar?.title = "Chat Log"
-        //supportActionBar?.title = username
-        supportActionBar?.title = user.username
+        supportActionBar?.title = toUser?.username
 
-        setupDummyData()
+        //  setupDummyData()
         listenForMessages()
-
 
         sendbtn_chat_log.setOnClickListener {
             Log.d(TAG, "Attempt to send message...")
@@ -54,21 +50,23 @@ class ChatLogActivity : AppCompatActivity() {
 
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val  chatMessage = p0.getValue(ChatMessage::class.java)
-                Log.d(TAG,chatMessage?.text)
+                val chatMessage = p0.getValue(ChatMessage::class.java)
+              //  Log.d(TAG, chatMessage?.text)
 
-                if (chatMessage != null){
+                if (chatMessage != null) {
                     Log.d(TAG, chatMessage.text)
 
-                    if (chatMessage.fromId ==FirebaseAuth.getInstance().uid)
-                    {
-                        adapter.add(ChatFromItem(chatMessage.text))
+                    if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
+                        val currentUser = LatestMessagesActivity.currentUser?: return
+                        adapter.add(ChatFromItem(chatMessage.text, currentUser))
 
-                    }else {
-                        adapter.add(ChatFromItem(chatMessage.text))
+                    } else {
+
+                        adapter.add(ChatToItem(chatMessage.text, toUser!!))
                     }
                 }
             }
+
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -93,8 +91,8 @@ class ChatLogActivity : AppCompatActivity() {
         val fromId: String,
         val toId: String,
         val timestamp: Long
-    ){
-        constructor() : this("","","","", -1)
+    ) {
+        constructor() : this("", "", "", "", -1)
     }
 
 
@@ -117,7 +115,7 @@ class ChatLogActivity : AppCompatActivity() {
             }
     }
 
-    private fun setupDummyData() {
+    /*private fun setupDummyData() {
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
@@ -131,13 +129,17 @@ class ChatLogActivity : AppCompatActivity() {
         adapter.add(ChatToItem("TO MESSA\nGES"))
 
         recyclerview_chat_log.adapter = adapter
-    }
+    }*/
 }
 
-class ChatFromItem(val text: String) : Item<ViewHolder>() {
+class ChatFromItem(val text: String, val user: com.example.kotlinmessenger.registerlogin.User) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
-          viewHolder.itemView.text_from_row.text = text
+        viewHolder.itemView.text_from_row.text = text
 
+
+        val uri = user.profileImageUrl
+        val targetImageView = viewHolder.itemView.image_chat_from_row
+        Picasso.get().load(uri).into(targetImageView)
     }
 
     override fun getLayout(): Int {
@@ -147,10 +149,13 @@ class ChatFromItem(val text: String) : Item<ViewHolder>() {
 
 }
 
-class ChatToItem(val text: String) : Item<ViewHolder>() {
+class ChatToItem(val text: String, val user: User) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
-  viewHolder.itemView.text_to_row.text = text
+        viewHolder.itemView.text_to_row.text = text
 
+        val uri = user.profileImageUrl
+        val targetImageView = viewHolder.itemView.image_chat_to_row
+        Picasso.get().load(uri).into(targetImageView)
     }
 
     override fun getLayout(): Int {
