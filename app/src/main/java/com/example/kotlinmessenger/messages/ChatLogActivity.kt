@@ -17,6 +17,8 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.activity_new_message.*
+import kotlinx.android.synthetic.main.chat_from_row.view.*
+import kotlinx.android.synthetic.main.chat_to_row.view.*
 
 class ChatLogActivity : AppCompatActivity() {
     companion object {
@@ -134,7 +136,7 @@ class ChatLogActivity : AppCompatActivity() {
 
 class ChatFromItem(val text: String) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        //  viewHolder.itemView.text_from_row.text = text
+          viewHolder.itemView.text_from_row.text = text
 
     }
 
@@ -147,7 +149,7 @@ class ChatFromItem(val text: String) : Item<ViewHolder>() {
 
 class ChatToItem(val text: String) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
-//  viewHolder.itemView.text_to_row.text = text
+  viewHolder.itemView.text_to_row.text = text
 
     }
 
