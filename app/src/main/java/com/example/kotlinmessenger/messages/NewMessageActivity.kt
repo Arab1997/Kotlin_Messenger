@@ -3,6 +3,7 @@ package com.example.kotlinmessenger.messages
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import com.example.kotlinmessenger.R
 import com.example.kotlinmessenger.registerlogin.LoginActivity
@@ -64,7 +65,8 @@ class NewMessageActivity : AppCompatActivity() {
                     val userItem  = item as UserItem
 
                     val intent = Intent(view.context, ChatLogActivity::class.java)
-                    intent.putExtra(USER_KEY , userItem.user.username)
+                    //intent.putExtra(USER_KEY , userItem.user.username)
+                    intent.putExtra(USER_KEY , userItem.user)
                     startActivity(intent)
                     finish()
                 }
@@ -78,6 +80,10 @@ class NewMessageActivity : AppCompatActivity() {
         })
     }
 
+
+}
+
+private fun Parcelable.putExtra(userKey: String, user: User) {
 
 }
 
