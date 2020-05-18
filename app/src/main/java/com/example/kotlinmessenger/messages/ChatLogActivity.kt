@@ -107,12 +107,11 @@ class ChatLogActivity : AppCompatActivity() {
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
+                editText_chat_log
             }
 
         toReference.setValue(chatMessage)
-            .addOnSuccessListener {
-                Log.d(TAG, "Saved our chat message: ${reference.key}")
-            }
+
     }
 
 
