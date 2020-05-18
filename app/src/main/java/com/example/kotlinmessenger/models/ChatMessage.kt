@@ -3,7 +3,7 @@ package com.example.kotlinmessenger.models
 import android.os.Parcelable
 
 
-class ChatMessage(val id: String, val username: String, val profileImageUrl: String): Parcelable
+class ChatMessage(val id: String, val text: String, val fromId: String, val toId: String, val timestamp: Long)
 {
-    constructor() : this("", "", "")
+    constructor() : this("", "", "","",-1 )
 }

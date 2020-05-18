@@ -23,10 +23,13 @@ class ChatLogActivity : AppCompatActivity() {
         val TAG = "Chatlog"
     }
 
+    val adapter = GroupAdapter<ViewHolder>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
 
+        recyclerview_chat_log.adapter = adapter
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
 
         // supportActionBar?.title = "Chat Log"
@@ -51,8 +54,19 @@ class ChatLogActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val  chatMessage = p0.getValue(ChatMessage::class.java)
                 Log.d(TAG,chatMessage?.text)
-            }
 
+                if (chatMessage != null){
+                    Log.d(TAG, chatMessage.text)
+
+                    if (chatMessage.fromId ==FirebaseAuth.getInstance().uid)
+                    {
+                        adapter.add(ChatFromItem(chatMessage.text))
+
+                    }else {
+                        adapter.add(ChatFromItem(chatMessage.text))
+                    }
+                }
+            }
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -76,7 +90,7 @@ class ChatLogActivity : AppCompatActivity() {
         val text: String,
         val fromId: String,
         val toId: String,
-        val timestampp: Long
+        val timestamp: Long
     ){
         constructor() : this("","","","", -1)
     }
@@ -103,22 +117,22 @@ class ChatLogActivity : AppCompatActivity() {
 
     private fun setupDummyData() {
         val adapter = GroupAdapter<ViewHolder>()
-        adapter.add(ChatItem("FROM MESSAGE"))
+        adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
-        adapter.add(ChatItem("FROM MESSAGE"))
+        adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
-        adapter.add(ChatItem("FROM MESSAGE"))
+        adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
-        adapter.add(ChatItem("FROM MESSAGE"))
+        adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
-        adapter.add(ChatItem("FROM MESSAGE"))
+        adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
 
         recyclerview_chat_log.adapter = adapter
     }
 }
 
-class ChatItem(val text: String) : Item<ViewHolder>() {
+class ChatFromItem(val text: String) : Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         //  viewHolder.itemView.text_from_row.text = text
 
