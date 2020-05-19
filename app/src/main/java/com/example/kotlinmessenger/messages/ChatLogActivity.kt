@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.kotlinmessenger.R
+import com.example.kotlinmessenger.models.ChatMessage
 import com.example.kotlinmessenger.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -100,22 +101,23 @@ class ChatLogActivity : AppCompatActivity() {
     //    val reference = FirebaseDatabase.getInstance().getReference("/message").push()
         val reference = FirebaseDatabase.getInstance().getReference("/user-message/$fromId/$toId").push()
 
-
         val toReference = FirebaseDatabase.getInstance().getReference("/user-message/$toId/$fromId").push()
 
         val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
-                editText_chat_log
+                editText_chat_log.text.clear()
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1 )
             }
 
         toReference.setValue(chatMessage)
-
+val latestMessagesRef  = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        latestMessagesRef.setValue(chatMessage)
     }
 
 
-    class ChatMessage(
+/*    class ChatMessage(
         val id: String,
         val text: String,
         val fromId: String,
@@ -123,7 +125,7 @@ class ChatLogActivity : AppCompatActivity() {
         val timestamp: Long
     ) {
         constructor() : this("", "", "", "", -1)
-    }
+    }*/
 
 
     /*private fun setupDummyData() {
@@ -143,6 +145,7 @@ class ChatLogActivity : AppCompatActivity() {
     }*/
 }
 
+/*
 class ChatFromItem(val text: String, val user: com.example.kotlinmessenger.registerlogin.User) :
     Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
@@ -173,4 +176,4 @@ class ChatToItem(val text: String, val user: User) : Item<ViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.chat_to_row
     }
-}
+}*/
