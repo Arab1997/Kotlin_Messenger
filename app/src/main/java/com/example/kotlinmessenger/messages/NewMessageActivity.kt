@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import com.example.kotlinmessenger.R
-import com.example.kotlinmessenger.registerlogin.LoginActivity
 import com.example.kotlinmessenger.registerlogin.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,15 +26,6 @@ class NewMessageActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Select User"
 
-        // val adapter = GroupAdapter<ViewHolder>()
-
-        //   recyclerview_message.layoutManager = LinearLayoutManager(this)
-        /*     adapter.add(UserItem())
-             adapter.add(UserItem())
-             adapter.add(UserItem())
-             adapter.add(UserItem())
-     */
-        //  recyclerview_message.adapter = adapter
         fetchUsers()
     }
 
@@ -68,22 +58,18 @@ class NewMessageActivity : AppCompatActivity() {
                     //intent.putExtra(USER_KEY , userItem.user.username)
                     intent.putExtra(USER_KEY , userItem.user)
                     startActivity(intent)
+
                     finish()
                 }
-
-
                 recyclerview_message.adapter = adapter
             }
-
             override fun onCancelled(p0: DatabaseError) {
             }
         })
     }
-
-
 }
 
-private fun Parcelable.putExtra(userKey: String, user: User) {
+internal fun Parcelable.putExtra(userKey: String, user: User?) {
 
 }
 

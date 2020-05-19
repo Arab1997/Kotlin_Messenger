@@ -6,6 +6,8 @@ import android.util.Log
 import com.example.kotlinmessenger.R
 import com.example.kotlinmessenger.models.ChatMessage
 import com.example.kotlinmessenger.models.User
+import com.example.kotlinmessenger.views.ChatFromItem
+import com.example.kotlinmessenger.views.ChatToItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -16,6 +18,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 
@@ -69,6 +72,8 @@ class ChatLogActivity : AppCompatActivity() {
                         adapter.add(ChatToItem(chatMessage.text, toUser!!))
                     }
                 }
+
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -98,26 +103,34 @@ class ChatLogActivity : AppCompatActivity() {
 
         if (fromId == null) return
 
-    //    val reference = FirebaseDatabase.getInstance().getReference("/message").push()
-        val reference = FirebaseDatabase.getInstance().getReference("/user-message/$fromId/$toId").push()
+        //    val reference = FirebaseDatabase.getInstance().getReference("/message").push()
+        val reference =
+            FirebaseDatabase.getInstance().getReference("/user-message/$fromId/$toId").push()
 
-        val toReference = FirebaseDatabase.getInstance().getReference("/user-message/$toId/$fromId").push()
+        val toReference =
+            FirebaseDatabase.getInstance().getReference("/user-message/$toId/$fromId").push()
 
-        val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
+        val chatMessage =
+            ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
                 editText_chat_log.text.clear()
-                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1 )
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
             }
 
         toReference.setValue(chatMessage)
-val latestMessagesRef  = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        val latestMessagesRef =
+            FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        latestMessagesRef.setValue(chatMessage)
+
+        val latestMessagesToRef =
+            FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
         latestMessagesRef.setValue(chatMessage)
     }
 
 
-/*    class ChatMessage(
+    class ChatMessage(
         val id: String,
         val text: String,
         val fromId: String,
@@ -125,10 +138,10 @@ val latestMessagesRef  = FirebaseDatabase.getInstance().getReference("/latest-me
         val timestamp: Long
     ) {
         constructor() : this("", "", "", "", -1)
-    }*/
+    }
 
 
-    /*private fun setupDummyData() {
+/*    private fun setupDummyData() {
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(ChatFromItem("FROM MESSAGE"))
         adapter.add(ChatToItem("TO MESSA\nGES"))
@@ -145,35 +158,4 @@ val latestMessagesRef  = FirebaseDatabase.getInstance().getReference("/latest-me
     }*/
 }
 
-/*
-class ChatFromItem(val text: String, val user: com.example.kotlinmessenger.registerlogin.User) :
-    Item<ViewHolder>() {
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.text_from_row.text = text
 
-
-        val uri = user.profileImageUrl
-        val targetImageView = viewHolder.itemView.image_chat_from_row
-        Picasso.get().load(uri).into(targetImageView)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.chat_from_row
-    }
-
-
-}
-
-class ChatToItem(val text: String, val user: User) : Item<ViewHolder>() {
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.text_to_row.text = text
-
-        val uri = user.profileImageUrl
-        val targetImageView = viewHolder.itemView.image_chat_to_row
-        Picasso.get().load(uri).into(targetImageView)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.chat_to_row
-    }
-}*/
